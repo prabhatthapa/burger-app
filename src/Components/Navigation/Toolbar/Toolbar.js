@@ -8,7 +8,7 @@ import "./Toolbar.css";
 const toolbar = (props) => (
   <header className="Toolbar">
     <DrawerToggle clicked={props.drawerToggleClicked} />
-    <Logo />
+    <Logo customClass="ToolbarLogoAdjust" />
     <nav className="DesktopOnly">
       <NavigationItems />
     </nav>

@@ -22,3 +22,8 @@
     display: none;
   }
 }
+
+.ToolbarLogoAdjust {
+  height: 80%;
+  margin-bottom: 0;
+}
