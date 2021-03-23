@@ -4,6 +4,7 @@
   height: 11%;
   box-sizing: border-box;
   border-radius: 5px;
+  margin-bottom: 32px;
 }
 
 .Logo img {
@@ -13,5 +14,6 @@
 @media (min-width: 500px) {
   .Logo {
     height: 80%;
+    margin-bottom: 0;
   }
 }
