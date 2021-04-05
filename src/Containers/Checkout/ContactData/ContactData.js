@@ -3,41 +3,85 @@ import { Component } from "react";
 import axiosInstance from "../../../axios-orders";
 import Button from "../../../Components/UI/Button/Button";
 import Spinner from "../../../Components/UI/Spinner/Spinner";
+import Input from "../../../Components/UI/Input/Input";
 
 import "./ContactData.css";
 
 class ContactData extends Component {
   state = {
-    name: "",
-    email: "",
-    address: {
-      street: "",
-      postalCode: "",
+    orderForm: {
+      name: {
+        elementType: "input",
+        elementConfig: {
+          type: "text",
+          placeholder: "Your name",
+        },
+        value: "",
+      },
+      street: {
+        elementType: "input",
+        elementConfig: {
+          type: "text",
+          placeholder: "Street",
+        },
+        value: "",
+      },
+      zipCode: {
+        elementType: "input",
+        elementConfig: {
+          type: "text",
+          placeholder: "Zip Code",
+        },
+        value: "",
+      },
+      country: {
+        elementType: "input",
+        elementConfig: {
+          type: "text",
+          placeholder: "Country",
+        },
+        value: "",
+      },
+      email: {
+        elementType: "input",
+        elementConfig: {
+          type: "text",
+          placeholder: "Your E-mail",
+        },
+        value: "",
+      },
+      deliveryMethod: {
+        elementType: "select",
+        elementConfig: {
+          options: [
+            { value: "fastest", displayValue: "Fastest" },
+            { value: "cheapest", displayValue: "Cheapest" },
+          ],
+        },
+        value: "",
+      },
     },
     loading: false,
     totalPrice: 0,
   };
 
   orderHandler = (event) => {
-    event.preventDefault();
     console.log(this.props);
+    event.preventDefault();
     this.setState({ loading: true });
+    const formData = {};
+
+    for (let inputIdentifer in this.state.orderForm) {
+      formData[inputIdentifer] = this.state.orderForm[inputIdentifer].value;
+    }
 
     const order = {
       ingredients: this.props.ingredients,
       price: this.props.totalPrice,
-      customer: {
-        name: "Prabhat Thapa",
-        address: {
-          street: "Test street",
-          zipCode: "TW33JB",
-          country: "UK",
-        },
-        email: "prabhat@test.com",
-      },
-      deliveryMethod: "fasted",
+      orderData: formData,
     };
 
+    console.log(order);
     axiosInstance
       .post("/orders.json", order)
       .then((response) => {
@@ -51,33 +95,32 @@ class ContactData extends Component {
       });
   };
 
+  inputChangedHandler = (event, inputIdentifer) => {
+    const updatedOrderForm = { ...this.state.orderForm };
+    const updatedFormElement = { ...updatedOrderForm[inputIdentifer] };
+    updatedFormElement.value = event.target.value;
+    updatedOrderForm[inputIdentifer] = updatedFormElement;
+    this.setState({ orderForm: updatedOrderForm });
+  };
+
   render() {
+    const formElementsArray = [];
+    for (let key in this.state.orderForm) {
+      formElementsArray.push({
+        id: key,
+        config: this.state.orderForm[key],
+      });
+    }
     let form = (
-      <form>
-        <input
-          className="Input"
-          type="text"
-          name="name"
-          placeholder="Your name"
-        />
-        <input
-          className="Input"
-          type="email"
-          name="email"
-          placeholder="Your email"
-        />
-        <input
-          className="Input"
-          type="text"
-          name="street"
-          placeholder="Your street"
-        />
-        <input
-          className="Input"
-          type="text"
-          name="postal"
-          placeholder="Your postal code"
-        />
+      <form onSubmit={this.orderHandler}>
+        {formElementsArray.map((formElement) => (
+          <Input
+            elementType={formElement.config.elementType}
+            elementConfig={formElement.config.elementConfig}
+            value={formElement.config.value}
+            changed={(event) => this.inputChangedHandler(event, formElement.id)}
+          />
+        ))}
         <Button buttonType="Success" clicked={this.orderHandler}>
           Order
         </Button>
