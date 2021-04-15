@@ -6,6 +6,7 @@ import Spinner from "../../../Components/UI/Spinner/Spinner";
 import Input from "../../../Components/UI/Input/Input";
 
 import "./ContactData.css";
+import { connect } from "react-redux";
 
 class ContactData extends Component {
   state = {
@@ -196,4 +197,11 @@ class ContactData extends Component {
   }
 }
 
-export default ContactData;
+const mapStateToProps = (state) => {
+  return {
+    ingredients: state.ingredients,
+    totalPrice: state.totalPrice,
+  };
+};
+
+export default connect(mapStateToProps)(ContactData);
