@@ -8,15 +8,12 @@ import Modal from "../../Components/UI/Modal/Modal";
 import Spinner from "../../Components/UI/Spinner/Spinner";
 import Aux from "../../hoc/Aux";
 import WithErrorHandler from "../../hoc/withErrorHandler/withErrorHandler";
-import * as actionTypes from "../../store/actions";
+import * as burgerBuilderActions from "../../store/actions/burgerBuilder";
 
 class BurgerBuilder extends Component {
   state = {
-    totalPrice: 0,
-    purchaseable: false,
     purchasing: false,
     loading: false,
-    error: false,
   };
 
   handlePurchase = () => {
@@ -53,14 +50,7 @@ class BurgerBuilder extends Component {
   };
 
   componentDidMount() {
-    axiosInstance
-      .get("/ingredients.json")
-      .then((response) => {
-        this.setState({ ingredients: response.data });
-      })
-      .catch((error) => {
-        this.setState({ error: true });
-      });
+    this.props.onInitIngredients();
   }
 
   render() {
@@ -77,7 +67,7 @@ class BurgerBuilder extends Component {
       orderSummary = <Spinner />;
     }
 
-    let burger = this.state.error ? (
+    let burger = this.props.error ? (
       <p>Error while fetching ingredients</p>
     ) : (
       <Spinner />
@@ -127,21 +117,17 @@ const mapStateToProps = (state) => {
   return {
     ingredients: state.ingredients,
     totalPrice: state.totalPrice,
+    error: state.error,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     onIngredientAdded: (ingredientName) =>
-      dispatch({
-        type: actionTypes.ADD_INGREDIENT,
-        ingredientName: ingredientName,
-      }),
+      dispatch(burgerBuilderActions.addIngredient(ingredientName)),
     onIngredientRemoved: (ingredientName) =>
-      dispatch({
-        type: actionTypes.REMOVE_INGREDIENT,
-        ingredientName: ingredientName,
-      }),
+      dispatch(burgerBuilderActions.removeIngredient(ingredientName)),
+    onInitIngredients: () => dispatch(burgerBuilderActions.initIngredients()),
   };
 };
 
